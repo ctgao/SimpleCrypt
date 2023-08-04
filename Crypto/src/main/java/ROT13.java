@@ -18,7 +18,7 @@ public class ROT13  {
     }
 
     ROT13() {
-        this('a', 'd');
+        this('a', 'm');
     }
 
     public String crypt(String text) throws UnsupportedOperationException {
