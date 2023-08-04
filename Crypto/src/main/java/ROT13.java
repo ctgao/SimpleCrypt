@@ -1,6 +1,14 @@
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
+
 public class ROT13  {
     private final String regularAlpha = "abcdefghijklmnopqrstuvwxyz";
+    private final String vowels = "aeiouy";
     private String startingAlpha;
     private String encryptedAlpha;
 
@@ -14,7 +22,27 @@ public class ROT13  {
     }
 
     public String crypt(String text) throws UnsupportedOperationException {
-        return encrypt(text);
+        if(hasVowelsPerWord(text)) {
+            return encrypt(text);
+        }
+        else{
+            return decrypt(text);
+        }
+    }
+
+    private boolean hasVowelsPerWord(String text) {
+        String[] words = text.toLowerCase().split(" ");
+        boolean containsVowel;
+        for(String singleWord : words){
+            containsVowel = false;
+            for(char c : singleWord.toCharArray()){
+                containsVowel = containsVowel || (vowels.indexOf(c) != -1);
+            }
+            if(!singleWord.equals("") && !containsVowel){
+                return false;
+            }
+        }
+        return true;
     }
 
     public String encrypt(String text) {
@@ -52,4 +80,33 @@ public class ROT13  {
         return s.substring(indexOfChar, s.length()) + s.substring(0, indexOfChar);
     }
 
+    // for reading from the file
+    public static String[] readFromFile(String fileName){
+        String directoryName = System.getProperty("user.dir");
+        ArrayList<String> fileAsLines = new ArrayList<>();
+        try {
+            Scanner fileIn = new Scanner(new File(directoryName + "/" + fileName));
+            while(fileIn.hasNext()){
+                fileAsLines.add(fileIn.nextLine());
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("FILE NOT FOUND!");
+            throw new RuntimeException(e);
+        }
+        return fileAsLines.toArray(fileAsLines.toArray(new String[fileAsLines.size()]));
+    }
+
+    public static void writeToFile(String outputFileName, String[] arrayToWrite) {
+        String directoryName = System.getProperty("user.dir");
+        try {
+            PrintWriter fileOut = new PrintWriter(directoryName + "/" + outputFileName);
+            for(String s : arrayToWrite){
+                fileOut.println(s);
+            }
+            fileOut.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("FILE NOT FOUND!");
+            throw new RuntimeException(e);
+        }
+    }
 }
